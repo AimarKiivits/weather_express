@@ -1,3 +1,4 @@
+const { error } = require('console');
 const express = require('express');
 const app = express();
 const fetch = require('node-fetch');
@@ -25,7 +26,8 @@ const getWeatherDataPromise = (url) => {
                 let result = {
                     city: city,
                     temp: temp,
-                    description: description 
+                    description: description,
+                    error: null
                 };
                 resolve(result);
             })
@@ -46,11 +48,10 @@ app.all('/', async (req, res) => {
     let url = `http://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${key}`;
     getWeatherDataPromise(url)
         .then((result) => {
-            console.log(result)
             res.render('index', { result: result });
         })
         .catch((error) => {
-            console.log(error);
+            res.render('index', { result: { error: 'City not found' } });
         })
 })
 
